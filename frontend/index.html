@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mélange · Contract Intelligence Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- App Shell -->
+    <div class="app-shell">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">Mélange</span>
+                    <span class="brand-sub">Contract Intelligence</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-label">Main</div>
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-view="documents">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Documents</span>
+                </a>
+                <a href="#" class="nav-item" data-view="obligations">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Obligations</span>
+                </a>
+
+                <div class="nav-section-label">Intelligence</div>
+                <a href="#" class="nav-item" data-view="search">
+                    <i class="fas fa-search"></i>
+                    <span>Search</span>
+                </a>
+                <a href="#" class="nav-item" data-view="compare">
+                    <i class="fas fa-columns"></i>
+                    <span>Compare</span>
+                </a>
+
+                <div class="nav-section-label">System</div>
+                <a href="#" class="nav-item" data-view="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Admin</span>
+                        <span class="user-role">Enterprise</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="topbar">
+                <button class="topbar-toggle" id="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="topbar-title" id="topbar-title">Dashboard</div>
+                <div class="topbar-actions">
+                    <button class="btn btn-ghost btn-icon" id="btn-refresh" title="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="btn btn-primary btn-upload" id="btn-upload-top">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>Upload</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <div class="content-area" id="content-area">
+
+                <!-- ==================== DASHBOARD VIEW ==================== -->
+                <section class="view active" id="view-dashboard">
+                    <!-- KPI Row -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-icon--blue">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-total-docs">—</span>
+                                <span class="kpi-label">Total Documents</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-icon--red">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-high-risks">—</span>
+                                <span class="kpi-label">High Risks</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-icon--amber">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-obligations">—</span>
+                                <span class="kpi-label">Upcoming Obligations</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon kpi-icon--green">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-processed">—</span>
+                                <span class="kpi-label">Processed Docs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="charts-grid">
+                        <div class="glass-card chart-card">
+                            <div class="card-header">
+                                <h3>Risk Distribution</h3>
+                                <span class="badge badge-outline">Live</span>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-risk"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card chart-card">
+                            <div class="card-header">
+                                <h3>Clause Types</h3>
+                                <span class="badge badge-outline">Live</span>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-clauses"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card chart-card">
+                            <div class="card-header">
+                                <h3>Documents by Status</h3>
+                                <span class="badge badge-outline">Live</span>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="chart-status"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Documents -->
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <h3>Recent Documents</h3>
+                            <a href="#" class="link-action" data-view-link="documents">View All <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Document</th>
+                                        <th>Status</th>
+                                        <th>Uploaded</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-docs-body">
+                                    <tr class="skeleton-row"><td colspan="4"><div class="skeleton skeleton-text"></div></td></tr>
+                                    <tr class="skeleton-row"><td colspan="4"><div class="skeleton skeleton-text"></div></td></tr>
+                                    <tr class="skeleton-row"><td colspan="4"><div class="skeleton skeleton-text"></div></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== DOCUMENTS VIEW ==================== -->
+                <section class="view" id="view-documents">
+                    <div class="view-header">
+                        <div class="view-header-left">
+                            <h2>Documents</h2>
+                            <span class="doc-count" id="doc-count"></span>
+                        </div>
+                        <div class="view-header-right">
+                            <div class="search-input-wrap">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="doc-search-input" placeholder="Search documents…" />
+                            </div>
+                            <button class="btn btn-primary btn-upload" id="btn-upload-docs">
+                                <i class="fas fa-plus"></i> Upload
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                        <th>Uploaded</th>
+                                        <th>Risk Level</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="docs-table-body">
+                                    <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton-text"></div></td></tr>
+                                    <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton-text"></div></td></tr>
+                                    <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton-text"></div></td></tr>
+                                    <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton-text"></div></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Empty State -->
+                        <div class="empty-state hidden" id="docs-empty">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>No documents found</h3>
+                            <p>Upload a contract to get started with AI-powered analysis.</p>
+                            <button class="btn btn-primary" id="btn-upload-empty">
+                                <i class="fas fa-cloud-upload-alt"></i> Upload Document
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== ANALYSIS VIEW ==================== -->
+                <section class="view" id="view-analysis">
+                    <button class="btn btn-ghost btn-back" id="btn-back-analysis">
+                        <i class="fas fa-arrow-left"></i> Back to Documents
+                    </button>
+
+                    <div class="analysis-header glass-card" id="analysis-header">
+                        <div class="analysis-title-row">
+                            <div>
+                                <h2 id="analysis-doc-title">—</h2>
+                                <div class="analysis-meta">
+                                    <span><i class="fas fa-calendar"></i> <span id="analysis-doc-date">—</span></span>
+                                    <span><i class="fas fa-file"></i> <span id="analysis-doc-status">—</span></span>
+                                </div>
+                            </div>
+                            <div class="analysis-actions">
+                                <button class="btn btn-outline" id="btn-download-report">
+                                    <i class="fas fa-file-pdf"></i> Download Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Executive Summary -->
+                    <div class="glass-card" id="analysis-summary-card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-align-left"></i> Executive Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <p id="analysis-summary-text" class="summary-text">Loading…</p>
+                        </div>
+                    </div>
+
+                    <!-- Key Findings & Action Items -->
+                    <div class="analysis-two-col">
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-lightbulb"></i> Key Findings</h3></div>
+                            <ul class="findings-list" id="analysis-findings"></ul>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-tasks"></i> Action Items</h3></div>
+                            <ul class="action-items-list" id="analysis-actions"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Risks -->
+                    <div class="glass-card">
+                        <div class="card-header"><h3><i class="fas fa-shield-alt"></i> Identified Risks</h3></div>
+                        <div class="risk-cards-grid" id="analysis-risks"></div>
+                        <div class="empty-state hidden" id="risks-empty">
+                            <i class="fas fa-shield-alt"></i>
+                            <h3>No risks identified</h3>
+                            <p>No risks were detected for this document.</p>
+                        </div>
+                    </div>
+
+                    <!-- Clauses -->
+                    <div class="glass-card">
+                        <div class="card-header"><h3><i class="fas fa-paragraph"></i> Extracted Clauses</h3></div>
+                        <div class="clauses-list" id="analysis-clauses"></div>
+                        <div class="empty-state hidden" id="clauses-empty">
+                            <i class="fas fa-paragraph"></i>
+                            <h3>No clauses extracted</h3>
+                            <p>No clauses were extracted for this document.</p>
+                        </div>
+                    </div>
+
+                    <!-- Obligations -->
+                    <div class="glass-card">
+                        <div class="card-header"><h3><i class="fas fa-calendar-check"></i> Obligations</h3></div>
+                        <div class="obligations-list" id="analysis-obligations"></div>
+                        <div class="empty-state hidden" id="obligations-analysis-empty">
+                            <i class="fas fa-calendar-check"></i>
+                            <h3>No obligations found</h3>
+                            <p>No obligations were detected for this document.</p>
+                        </div>
+                    </div>
+
+                    <!-- QA Section -->
+                    <div class="glass-card">
+                        <div class="card-header"><h3><i class="fas fa-robot"></i> Ask AI</h3></div>
+                        <div class="qa-section">
+                            <div class="qa-input-row">
+                                <input type="text" id="qa-input" placeholder="Ask a question about this document…" />
+                                <button class="btn btn-primary" id="btn-qa-ask">
+                                    <i class="fas fa-paper-plane"></i> Ask
+                                </button>
+                            </div>
+                            <div class="qa-answer hidden" id="qa-answer">
+                                <div class="qa-answer-label"><i class="fas fa-robot"></i> AI Answer</div>
+                                <p id="qa-answer-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== COMPARE VIEW ==================== -->
+                <section class="view" id="view-compare">
+                    <div class="view-header">
+                        <h2>Compare Documents</h2>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="compare-selectors">
+                            <div class="compare-select-group">
+                                <label>Document A</label>
+                                <select id="compare-select-a" class="form-select">
+                                    <option value="">Select version…</option>
+                                </select>
+                            </div>
+                            <div class="compare-vs"><i class="fas fa-exchange-alt"></i></div>
+                            <div class="compare-select-group">
+                                <label>Document B</label>
+                                <select id="compare-select-b" class="form-select">
+                                    <option value="">Select version…</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="btn-compare">
+                                <i class="fas fa-code-compare"></i> Compare
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="compare-results hidden" id="compare-results">
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-plus-circle" style="color:var(--green)"></i> Added Sections</h3></div>
+                            <div class="diff-list diff-added" id="compare-added"></div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-minus-circle" style="color:var(--red)"></i> Removed Sections</h3></div>
+                            <div class="diff-list diff-removed" id="compare-removed"></div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-pen" style="color:var(--amber)"></i> Modified Sections</h3></div>
+                            <div class="diff-list diff-modified" id="compare-modified"></div>
+                        </div>
+                    </div>
+                    <div class="empty-state" id="compare-empty">
+                        <i class="fas fa-columns"></i>
+                        <h3>Select two document versions</h3>
+                        <p>Choose versions from the dropdowns above to see a detailed comparison.</p>
+                    </div>
+                </section>
+
+                <!-- ==================== SEARCH VIEW ==================== -->
+                <section class="view" id="view-search">
+                    <div class="view-header">
+                        <h2>Search Intelligence</h2>
+                    </div>
+                    <div class="glass-card search-hero-card">
+                        <div class="search-hero-input-wrap">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="global-search-input" placeholder="Search contracts, clauses, risks…" />
+                            <button class="btn btn-primary" id="btn-global-search">Search</button>
+                        </div>
+                    </div>
+
+                    <div id="search-results-area" class="hidden">
+                        <div class="search-results-group glass-card" id="search-results-documents">
+                            <div class="card-header"><h3><i class="fas fa-file-alt"></i> Documents</h3></div>
+                            <div class="search-results-list" id="search-list-documents"></div>
+                        </div>
+                        <div class="search-results-group glass-card" id="search-results-clauses">
+                            <div class="card-header"><h3><i class="fas fa-paragraph"></i> Clauses</h3></div>
+                            <div class="search-results-list" id="search-list-clauses"></div>
+                        </div>
+                        <div class="search-results-group glass-card" id="search-results-risks">
+                            <div class="card-header"><h3><i class="fas fa-shield-alt"></i> Risks</h3></div>
+                            <div class="search-results-list" id="search-list-risks"></div>
+                        </div>
+                    </div>
+
+                    <div class="empty-state" id="search-empty">
+                        <i class="fas fa-search"></i>
+                        <h3>Search across all contracts</h3>
+                        <p>Enter a keyword to search documents, clauses, and identified risks.</p>
+                    </div>
+                </section>
+
+                <!-- ==================== OBLIGATIONS VIEW ==================== -->
+                <section class="view" id="view-obligations">
+                    <div class="view-header">
+                        <div class="view-header-left">
+                            <h2>Obligations Tracker</h2>
+                        </div>
+                        <div class="view-header-right">
+                            <div class="filter-group">
+                                <button class="btn btn-filter active" data-filter="all">All</button>
+                                <button class="btn btn-filter" data-filter="open">Open</button>
+                                <button class="btn btn-filter" data-filter="completed">Completed</button>
+                                <button class="btn btn-filter" data-filter="overdue">Overdue</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="obligations-timeline" id="obligations-timeline"></div>
+                    <div class="empty-state hidden" id="obligations-empty">
+                        <i class="fas fa-calendar-check"></i>
+                        <h3>No obligations found</h3>
+                        <p>Upload and analyze contracts to detect obligations automatically.</p>
+                    </div>
+                </section>
+
+                <!-- ==================== SETTINGS VIEW ==================== -->
+                <section class="view" id="view-settings">
+                    <div class="view-header"><h2>Settings</h2></div>
+
+                    <div class="settings-grid">
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-user-circle"></i> Profile</h3></div>
+                            <div class="settings-form">
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" class="form-input" value="Admin User" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="text" class="form-input" value="admin@melange.ai" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <input type="text" class="form-input" value="Enterprise Administrator" readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-key"></i> API Configuration</h3></div>
+                            <div class="settings-form">
+                                <div class="form-group">
+                                    <label>API Base URL</label>
+                                    <input type="text" class="form-input" value="http://localhost:8000/api" readonly />
+                                </div>
+                                <div class="form-group">
+                                    <label>API Key</label>
+                                    <div class="api-key-display">
+                                        <input type="password" class="form-input" id="settings-api-key" value="mlng_sk_live_xxxxxxxxxxxxxxxx" readonly />
+                                        <button class="btn btn-ghost btn-icon" id="btn-toggle-key"><i class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <span class="badge badge-green"><i class="fas fa-circle" style="font-size:0.5rem"></i> Connected</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-card">
+                            <div class="card-header"><h3><i class="fas fa-palette"></i> Appearance</h3></div>
+                            <div class="settings-form">
+                                <div class="form-group">
+                                    <label>Theme</label>
+                                    <div class="theme-toggle-row">
+                                        <span class="theme-label active"><i class="fas fa-moon"></i> Dark</span>
+                                        <span class="theme-label"><i class="fas fa-sun"></i> Light</span>
+                                        <span class="theme-note">(Light mode coming soon)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay hidden" id="upload-modal">
+        <div class="modal glass-card">
+            <div class="modal-header">
+                <h3>Upload Document</h3>
+                <button class="btn btn-ghost btn-icon modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Document Title</label>
+                    <input type="text" class="form-input" id="upload-title" placeholder="Enter document title…" />
+                </div>
+                <div class="form-group">
+                    <label>File</label>
+                    <div class="file-drop-zone" id="file-drop-zone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop a file here, or <span class="link-action">browse</span></p>
+                        <span class="file-name" id="file-name-display"></span>
+                        <input type="file" id="upload-file" accept=".pdf,.docx,.doc,.txt" hidden />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="btn-upload-submit">
+                    <i class="fas fa-upload"></i> Upload & Analyze
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
